@@ -9,3 +9,13 @@ h1{
   align-items: center;
   font-weight: 200;
 }
+
+img{
+  width: 400px;
+  height: 300px;
+  margin-bottom: 10px;
+}
+
+button{
+  margin: 10px;
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useState} from "react";
 import "./App.css"
 import OfflinePage from "./components/OfflinePage";
 import MainApp from "./components/MainApp";
+import ImageUploader from "./components/ImageUploader";
 
 const App = () => {
 
@@ -17,7 +18,7 @@ const App = () => {
     
    return (
     <div>
-        <MainApp />
+        <ImageUploader />
     </div>
    )
 }
