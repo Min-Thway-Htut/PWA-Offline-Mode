@@ -4,22 +4,22 @@ import OfflinePage from "./components/OfflinePage";
 import MainApp from "./components/MainApp";
 
 const App = () => {
-    const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-    useEffect(() => {
-        const handleOnline = () => setIsOnline(true);
-        const handleOffline = () => setIsOnline(false);
-
-        window.addEventListener("online", handleOnline);
-        window.addEventListener("offline", handleOffline);
-
-        return () => {
-            window.removeEventListener("online", handleOnline);
-            window.removeEventListener("offline", handleOffline);
-        }
-    }, []);
-
-    return isOnline ? <MainApp /> : <OfflinePage />
+   useEffect(() => {
+    if("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+            for( let registration of registrations) {
+                registration.update();
+            }
+        });
+    }
+   }, []);
+    
+   return (
+    <div>
+        <MainApp />
+    </div>
+   )
 }
 
 export default App;
