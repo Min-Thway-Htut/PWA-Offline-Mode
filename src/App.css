@@ -17,5 +17,12 @@ img{
 }
 
 button{
-  margin: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.buttons{
+  display: flex;
+  flex-direction: row;
 }
