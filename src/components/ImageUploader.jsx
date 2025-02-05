@@ -3,6 +3,8 @@ import React, { useRef, useState } from 'react';
 function ImageUploader() {
   const canvasRef = useRef(null);
   const imgRef = useRef(null);
+  const [width, setWidth] = useState(400);
+  const [height, setHeight] = useState(300);
   const [image, setImage] = useState(null);
   const [isConverted, setIsConverted] = useState(false); // Track conversion state
 
@@ -32,10 +34,18 @@ function ImageUploader() {
 
       // Ensure the image is fully loaded before drawing to canvas
       image.onload = () => {
-        // Set canvas size
-        canvas.width = image.naturalWidth;
-        canvas.height = image.naturalHeight;
+        
+        let newWidth = width;
+        let newHeight = height;
 
+        if (width && !height) {
+          newHeight = (image.naturalHeight / image.naturalWidth) * width;
+        } else if (!width && height) {
+          newWidth = (image.naturalWidth / image.naturalHeight) * height;
+        }
+
+        canvas.width = newWidth;
+        canvas.height = newHeight;
         // Draw image to canvas
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
@@ -89,7 +99,9 @@ function ImageUploader() {
           style={{ 
             marginTop: '20px', 
             maxWidth: '100%', 
-            display: isConverted ? 'none' : 'block' 
+            display: isConverted ? 'block' : 'block',
+            width: '400px',
+            height: '300px',
           }}
         />
       )}
