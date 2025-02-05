@@ -1,8 +1,9 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 h1{
@@ -11,11 +12,30 @@ h1{
 }
 
 img{
-  width: 400px;
-  height: 300px;
-  margin-top: 2px;
+  display: block;
+  max-width: 100%;
 }
 
+main {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  display: grid;
+  place-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  --position: 50%;
+}
+
+.image.container {
+  max-width: 800px;
+  max-height: 90vh;
+  aspect-ratio: 16/9;
+}
 button{
   display: block;
   margin-left: auto;
