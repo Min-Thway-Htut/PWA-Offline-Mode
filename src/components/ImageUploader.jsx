@@ -1,121 +1,95 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
-function ImageUploader() {
-  const canvasRef = useRef(null);
-  const imgRef = useRef(null);
-  const [width, setWidth] = useState(400);
-  const [height, setHeight] = useState(300);
-  const [image, setImage] = useState(null);
-  const [isConverted, setIsConverted] = useState(false); // Track conversion state
+const ImageUploader = () => {
+    const canvasRef = useRef(null);
+    const imgRef = useRef(null);
+    const [image, setImage] = useState(null);
+    const [isConverted, setIsConverted] = useState(false);
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
-      setIsConverted(false);
-    }
-  };
-
-  const handleButtonClick = () => {
-    document.getElementById("file-input").click();
-  };
-
-  const handleReset = () => {
-    setImage(null);
-    setIsConverted(false);
-  };
-
-  const convertToBlackAndWhite = () => {
-    if (imgRef.current && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-      const image = imgRef.current;
-
-      // Ensure the image is fully loaded before drawing to canvas
-      image.onload = () => {
-        
-        let newWidth = width;
-        let newHeight = height;
-
-        if (width && !height) {
-          newHeight = (image.naturalHeight / image.naturalWidth) * width;
-        } else if (!width && height) {
-          newWidth = (image.naturalWidth / image.naturalHeight) * height;
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            setImage(imageUrl);
+            setIsConverted(false);
         }
+    };
 
-        canvas.width = newWidth;
-        canvas.height = newHeight;
-        // Draw image to canvas
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const handleButtonClick = () => {
+        document.getElementById("file-input").click();
+    };
 
-        // Get pixel data
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
+    const handleReset = () => {
+        setImage(null);
+        setIsConverted(false);
+    };
 
-        // Convert to grayscale
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i];     
-          const g = data[i + 1]; 
-          const b = data[i + 2]; 
-          const gray = 0.3 * r + 0.59 * g + 0.11 * b;
+    const convertToBlackAndWhite = () => {
+        if (imgRef.current && canvasRef.current) {
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext("2d");
+            const image = imgRef.current;
 
-          data[i] = gray;     
-          data[i + 1] = gray; 
-          data[i + 2] = gray; 
+            image.onload = () => {
+                canvas.width = image.naturalWidth;
+                canvas.height = image.naturalHeight;
+                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    const gray = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
+                    data[i] = data[i + 1] = data[i + 2] = gray;
+                }
+
+                ctx.putImageData(imageData, 0, 0);
+                setIsConverted(true);
+            };
+
+            if (image.complete) {
+                image.onload();
+            }
         }
+    };
 
-        // Apply grayscale effect
-        ctx.putImageData(imageData, 0, 0);
-        setIsConverted(true);
-      };
+    useEffect(() => {
+        const container = document.querySelector('.container');
+        const slider = document.querySelector('.slider');
 
-      // If the image is already loaded, trigger the onload manually
-      if (image.complete) {
-        image.onload();
-      }
-    }
-  };
+        const handleSliderInput = (e) => {
+            container.style.setProperty('--position', `${e.target.value}%`);
+        };
 
-  return (
-    <div style={{ textAlign: "center" }}>
-      <h1>Upload Image</h1>
+        slider.addEventListener('input', handleSliderInput);
 
-      {/* Hidden file input */}
-      <input
-        id="file-input"
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        style={{ display: 'none' }}
-      />
+        return () => {
+            slider.removeEventListener('input', handleSliderInput);
+        };
+    }, []);
 
-      {/* Image Preview (Hidden after conversion) */}
-      {image && (
-        <img
-          ref={imgRef}
-          src={image}
-          alt="Preview"
-          style={{ 
-            marginTop: '20px', 
-            maxWidth: '100%', 
-            display: isConverted ? 'block' : 'block',
-            width: '400px',
-            height: '300px',
-          }}
-        />
-      )}
-
-      {/* Canvas for Black & White Conversion */}
-      {image && <canvas ref={canvasRef} style={{ marginTop: "20px", maxWidth: "100%" }}></canvas>}
-
-      <div className="buttons" style={{ marginTop: "20px" }}>
-        <button onClick={handleButtonClick}>Upload Image</button>
-        <button onClick={handleReset} style={{ marginLeft: '10px' }}>Reset</button>
-        <button onClick={convertToBlackAndWhite} style={{ marginLeft: '10px' }}>Black and White</button>
-      </div>
-    </div>
-  );
-}
+    return (
+        <main>
+            <h1>Upload Image</h1>
+            <div className="container">
+                <input id="file-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
+                <div className="image-container">
+                    {image && <img ref={imgRef} src={image} alt="Preview" className="image-before slider-image" />}
+                    {image && <canvas ref={canvasRef} className="image-after slider-image"></canvas>}
+                </div>
+                <input type="range" min="0" max="100" defaultValue="100" className="slider" aria-label="Percentage of before photo shown" />
+                <div className="slider-line"></div>
+                <div className="slider-button" aria-hidden="true">
+                    <img src="/arrows-out-line-horizontal.svg" alt="" />
+                </div>
+            </div>
+            <div className="buttons" style={{ marginTop: "20px" }}>
+                <button onClick={handleButtonClick}>Upload Image</button>
+                <button onClick={handleReset} style={{ marginLeft: '10px' }}>Reset</button>
+                <button onClick={convertToBlackAndWhite} style={{ marginLeft: '10px' }}>Black and White</button>
+            </div>
+        </main>
+    );
+};
 
 export default ImageUploader;

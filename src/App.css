@@ -16,25 +16,25 @@ img{
   max-width: 100%;
 }
 
-main {
+main{
   display: grid;
   place-items: center;
   min-height: 100vh;
 }
 
-.container {
+.container{
   display: grid;
   place-content: center;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  --position: 50%;
+  --position: 100%;
 }
 
-.image.container {
+.image-container{
   max-width: 800px;
   max-height: 90vh;
-  aspect-ratio: 1/1;
+  aspect-ratio: 16/9;
 }
 
 .slider-image {
@@ -50,7 +50,7 @@ main {
   width: var(--position);
 }
 
-.slider {
+.slider{
   position: absolute;
   inset: 0;
   cursor: pointer;
@@ -65,21 +65,21 @@ main {
 }
 
 .slider-line {
-  position: absolute;
+  position: absoulte;
   inset: 0;
   width: .2rem;
   height: 100%;
   background-color: #fff;
   z-index: 10;
   left: var(--position);
-  tarnsform: translateX(-50%);
+  transform: translateX(-50%);
+  pointer-events: none;
   pointer-events: none;
 }
 
 .slider-button {
   position: absolute;
   background-color: #fff;
-  color: blue;
   padding: .5rem;
   border-radius: 100vw;
   display: grid;
@@ -90,14 +90,4 @@ main {
   pointer-events: none;
   z-index: 100;
   box-shadow: 1px 1px 1px hsl(0, 50%, 2%, .5 );
-}
-button{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.buttons{
-  display: flex;
-  flex-direction: row;
 }

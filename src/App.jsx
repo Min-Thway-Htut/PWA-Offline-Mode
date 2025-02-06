@@ -3,7 +3,7 @@ import "./App.css"
 import OfflinePage from "./components/OfflinePage";
 import MainApp from "./components/MainApp";
 import ImageUploader from "./components/ImageUploader";
-import ImageComparison from "./components/ImageComparison";
+
 
 const App = () => {
 
@@ -19,7 +19,7 @@ const App = () => {
     
    return (
     <div>
-        <ImageComparison />
+        <ImageUploader />
     </div>
    )
 }
